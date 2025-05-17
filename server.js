@@ -103,7 +103,7 @@ app.post('/finalize-upload', (req, res) => {
     return res.status(403).send('Unauthorized');
   }
 
-  const { name, email, message, uploadId, filename } = req.body;
+  const { name, email, serial, message, uploadId, filename } = req.body;
   const dir = path.join('uploads/tmp', uploadId);
   const files = fs.readdirSync(dir).sort((a, b) => {
     return parseInt(a.split('_')[1]) - parseInt(b.split('_')[1]);
@@ -138,6 +138,7 @@ app.post('/finalize-upload', (req, res) => {
   const submission = {
     name,
     email,
+    serial,
     message,
     file: path.basename(finalPath),
     date: new Date().toISOString()

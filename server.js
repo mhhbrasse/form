@@ -121,6 +121,24 @@ app.post('/finalize-upload', (req, res) => {
   res.send('Upload complete');
 });
 
+// Endpoint to serve JSON file content
+app.get('/submissions', (req, res) => {
+  fs.readFile('submissions.json', 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading submissions.json:', err);
+      return res.status(500).json({ error: 'Failed to read file' });
+    }
+
+    try {
+      const jsonData = JSON.parse(data);
+      res.json(jsonData);
+    } catch (parseErr) {
+      console.error('Invalid JSON:', parseErr);
+      res.status(500).json({ error: 'Invalid JSON format in file' });
+    }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

@@ -180,3 +180,12 @@
     });
 
     function setFormEnabled(enabled) {
+      form.name.disabled = !enabled;
+      form.email.disabled = !enabled;
+      form.message.disabled = !enabled;
+      fileInput.disabled = !enabled;
+      submitButton.disabled = !enabled;
+    }
+  </script>
+</body>
+</html>

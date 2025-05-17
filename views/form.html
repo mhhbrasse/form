@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Complaint</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 2rem;
+    }
+    input, textarea {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Submit a Logfile</h1>
+  <form id="uploadForm">
+    <label for="name">Name</label>
+    <input type="text" name="name" required />
+
+    <label for="email">Email</label>
+    <input type="email" name="email" required />
+
+    <label for="message">Serial number / message</label>
+    <textarea name="message" rows="5" required></textarea>
+
+    <label for="file">Upload File</label>
+    <input type="file" name="file" required />
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("#uploadForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const uploadId = Date.now().toString();
+      const file = formData.get("file");
+
+      if (!file) {
+        alert("Please select a file to upload.");
+        return;
+      }
+
+      const chunkSize = 1024 * 1024; // 1MB
+      const totalChunks = Math.ceil(file.size / chunkSize);
+
+      for (let i = 0; i < totalChunks; i++) {
+        const chunk = file.slice(i * chunkSize, (i + 1) * chunkSize);
+        const chunkForm = new FormData();
+        chunkForm.append("chunk", chunk);
+        chunkForm.append("uploadId", uploadId);
+        chunkForm.append("chunkNumber", i);
+
+        await fetch("/upload-chunk", {
+          method: "POST",
+          body: chunkForm,
+        });
+      }
+
+      const finalizeData = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        message: formData.get("message"),
+        filename: file.name,
+        uploadId,
+      };
+
+      const finalizeRes = await fetch("/finalize-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(finalizeData),
+      });
+
+      if (finalizeRes.ok) {
+        document.body.innerHTML = "<h2>Upload complete. Thank you!</h2>";
+      } else {
+        alert("Upload failed. Please try again.");
+      }
+    });
+  });
+  </script>
+</body>
+</html>

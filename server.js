@@ -121,21 +121,16 @@ app.post('/finalize-upload', (req, res) => {
   res.send('Upload complete');
 });
 
-// Endpoint to serve JSON file content
+// Endpoint to return raw text from submissions.json
 app.get('/submissions', (req, res) => {
   fs.readFile('submissions.json', 'utf8', (err, data) => {
     if (err) {
-      console.error('Error reading submissions.json:', err);
-      return res.status(500).json({ error: 'Failed to read file' });
+      console.error('Error reading file:', err);
+      return res.status(500).send('Failed to read file');
     }
 
-    try {
-      const jsonData = JSON.parse(data);
-      res.json(jsonData);
-    } catch (parseErr) {
-      console.error('Invalid JSON:', parseErr);
-      res.status(500).json({ error: 'Invalid JSON format in file' });
-    }
+    res.type('text/plain'); // Set content type to plain text
+    res.send(data);
   });
 });
 

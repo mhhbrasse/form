@@ -3,34 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>File Upload with Progress</title>
+  <title>File Upload</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; }
-    label, button { display: block; margin-top: 1rem; }
-    progress { width: 100%; height: 20px; }
-    #status { margin-top: 1rem; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    progress {
+      margin-top: 15px;
+      width: 100%;
+      height: 20px;
+    }
+    #status {
+      margin-top: 10px;
+      font-style: italic;
+      color: #333;
+    }
   </style>
 </head>
 <body>
   <h1>Upload Your File</h1>
-
   <form id="uploadForm">
-    <label>
-      Name:
-      <input type="text" name="name" required />
-    </label>
-    <label>
-      Email:
-      <input type="email" name="email" required />
-    </label>
-    <label>
-      Message:
-      <textarea name="message" rows="4" required></textarea>
-    </label>
-    <label>
-      Select file:
-      <input type="file" id="fileInput" required />
-    </label>
+    <label for="name">Name</label>
+    <input type="text" name="name" id="name" required />
+
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" required />
+
+    <label for="message">Message</label>
+    <textarea name="message" id="message" required></textarea>
+
+    <label for="fileInput">Select file</label>
+    <input type="file" id="fileInput" required />
 
     <progress id="uploadProgress" value="0" max="100"></progress>
     <div id="status"></div>
@@ -53,17 +92,15 @@
         return;
       }
 
-      const chunkSize = 1024 * 1024; // 1 MB chunks
+      const chunkSize = 1024 * 1024; // 1MB
       const totalChunks = Math.ceil(file.size / chunkSize);
       let currentChunk = 0;
 
-      // Generate a unique upload ID (simple random string)
       const uploadId = Date.now().toString() + '-' + Math.random().toString(36).substring(2);
 
-      const formData = new FormData(form);
-      const name = formData.get('name');
-      const email = formData.get('email');
-      const message = formData.get('message');
+      const name = form.name.value;
+      const email = form.email.value;
+      const message = form.message.value;
 
       statusDiv.textContent = '';
       progressBar.value = 0;
@@ -73,19 +110,17 @@
           // Finalize upload
           statusDiv.textContent = 'Finalizing upload...';
 
-          const finalizeData = {
-            name,
-            email,
-            message,
-            uploadId,
-            filename: file.name
-          };
-
           try {
             const finalizeResponse = await fetch('/finalize-upload', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(finalizeData)
+              body: JSON.stringify({
+                name,
+                email,
+                message,
+                uploadId,
+                filename: file.name
+              })
             });
 
             if (!finalizeResponse.ok) throw new Error('Finalize failed');
@@ -122,7 +157,7 @@
           progressBar.value = (currentChunk / totalChunks) * 100;
           statusDiv.textContent = `Uploading chunk ${currentChunk} of ${totalChunks}...`;
 
-          uploadChunk(); // Upload next chunk
+          uploadChunk();
         } catch (err) {
           statusDiv.textContent = 'Error uploading chunk: ' + err.message;
         }

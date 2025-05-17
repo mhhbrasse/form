@@ -116,8 +116,8 @@ app.post('/finalize-upload', (req, res) => {
     otps[otpIndex].used = true;
 
     // Optional: generate and add a new OTP here if desired
-    // const newCode = generateOtp();
-    // otps.push({ code: newCode, used: false });
+    const newCode = generateOtp();
+    otps.push({ code: newCode, used: false });
 
     saveOtps(otps);
   }

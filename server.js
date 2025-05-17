@@ -28,7 +28,7 @@ function saveOtps(otps) {
   fs.writeFileSync('otps.json', JSON.stringify(otps, null, 2));
 }
 
-app.get('/verify', (req, res) => {
+app.get('/upload', (req, res) => {
   const otp = req.query.otp;
   if (!otp) {
     return res.status(400).send('OTP is required.');

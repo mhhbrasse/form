@@ -61,7 +61,19 @@ app.get('/generate-otp', (req, res) => {
 
   saveOtps(otps);
 
-  res.json({ otp: newCode });
+  const uploadUrl = `http://localhost:${PORT}/upload?otp=${newCode}`;
+
+  res.send(`
+    <html>
+      <body>
+        <p>Your OTP code is: <strong>${newCode}</strong></p>
+        <p>Use the following URL to start your upload:</p>
+        <p><a href="${uploadUrl}">${uploadUrl}</a></p>
+        <p>Copy and paste this URL in your browser to begin.</p>
+      </body>
+    </html>
+  `);
+  //res.json({ otp: newCode });
 });
 
 app.get('/logging', (req, res) => {

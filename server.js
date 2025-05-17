@@ -61,7 +61,7 @@ app.get('/generate-otp', (req, res) => {
 
   saveOtps(otps);
 
-  const uploadUrl = `http://localhost:${PORT}/upload?otp=${newCode}`;
+  const uploadUrl = `https://form-production-70f0.up.railway.app/upload?otp=${newCode}`;
 
   res.send(`
     <html>
@@ -73,6 +73,7 @@ app.get('/generate-otp', (req, res) => {
       </body>
     </html>
   `);
+  
   //res.json({ otp: newCode });
 });
 

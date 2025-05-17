@@ -8,6 +8,12 @@ const session = require('express-session');
 const app = express();
 const PORT = 3000;
 
+// Prevent caching
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

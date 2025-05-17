@@ -41,7 +41,7 @@ app.get('/upload', (req, res) => {
     record.used = true;
     saveOtps(otps);
     req.session.verified = true;
-    res.redirect('/complaint');
+    res.redirect('/logging');
   } else {
     res.status(403).send('Invalid or already used OTP.');
   }
@@ -55,13 +55,13 @@ app.get('/upload', (req, res) => {
 //    record.used = true;
 //    saveOtps(otps);
 //    req.session.verified = true;
-//    res.redirect('/complaint');
+//    res.redirect('/logging');
 //  } else {
 //    res.status(403).send('Invalid or already used OTP.');
 //  }
 //});
 
-app.get('/complaint', (req, res) => {
+app.get('/logging', (req, res) => {
   if (req.session.verified) {
     res.sendFile(path.join(__dirname, 'views', 'form.html'));
   } else {

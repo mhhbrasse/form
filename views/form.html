@@ -90,7 +90,23 @@
     const progressBar = document.getElementById('uploadProgress');
     const statusDiv = document.getElementById('status');
     const submitButton = document.getElementById('submitButton');
+    //const fileInput1 = document.getElementById('file');
+    const fileNameDisplay = document.getElementById('file-name');
 
+    fileInput.addEventListener('input', () => {
+      // Show immediate feedback when file is being selected
+      fileNameDisplay.textContent = 'Reading file...';
+    });
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (file) {
+        fileNameDisplay.textContent = `Selected file: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+      } else {
+        fileNameDisplay.textContent = '';
+      }
+    });
+    
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 

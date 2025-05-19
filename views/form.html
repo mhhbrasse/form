@@ -176,7 +176,7 @@
             if (!finalizeResponse.ok) throw new Error('Finalize failed');
 
             progressBar.value = 100;
-            statusDiv.textContent = 'Thanks for uploading!';
+            statusDiv.textContent = 'Thanks for uploading! You can close this window.';
             setFormEnabled(false);
 
           } catch (err) {
